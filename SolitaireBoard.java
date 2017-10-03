@@ -34,9 +34,12 @@ public class SolitaireBoard {
       <put rep. invar. comment here>
 
     */
-   
+    // --------------------- HACKY -------- FIX --------------------
+   private int[] piles = new int[4096]; // internal piles array
+    private int numPiles;
+
    // <add instance variables here>
-  
+
  
    /**
      Creates a solitaire board with the configuration specified in piles.
@@ -44,8 +47,25 @@ public class SolitaireBoard {
      PRE: piles contains a sequence of positive numbers that sum to SolitaireBoard.CARD_TOTAL
    */
    public SolitaireBoard(ArrayList<Integer> piles) {
-
-
+      int tempMax = -4096;
+      int rmvElem = 0;
+      /**
+       * find the maximum element in piles and put it into internal piles in descending order
+       */
+      for (int j = 0; j < piles.size(); j++) 
+      {
+        for (int i = 0; i < piles.size(); i++)
+        {
+            if(piles.get(i) > tempMax)
+            {
+              tempMax = piles.get(i);
+              rmvElem = i;
+            }  
+        }
+        this.piles[j] = tempMax;
+        piles.set(rmvElem, 0);
+        tempMax = -4096;
+      }
       assert isValidSolitaireBoard();   // sample assert statement (you will be adding more of these calls)
    }
  
@@ -99,10 +119,62 @@ public class SolitaireBoard {
       Returns true iff the solitaire board data is in a valid state
       (See representation invariant comment for more details.)
     */
-   private boolean isValidSolitaireBoard() {
+    private boolean isValidSolitaireBoard() 
+    {
+      // -------------------------- TEST ------------------------
+      numPiles = 0;
+      for (int i = this.piles.length-1; i >= 0; i--)
+      {
+        if (this.piles[i] != 0)
+        {
+          numPiles = i + 1;
+          break;
+        }
+      }
       
-      return false;  // dummy code to get stub to compile
+      System.out.print("Board to be Validated: [");
+      for (int i = 0; i < numPiles; i++)
+      {
+          if (i == numPiles - 1) {
+              System.out.print(this.piles[i]);
+          }
+          else
+              System.out.print(this.piles[i] + ", ");
+      }
+      System.out.print("]\n");
+      // -------------------------- TEST ------------------------
 
+      // ------------------------- VALIDATE --------------------
+      boolean validLength = true;
+      boolean validPileVals = true;
+      boolean validTotal = true;
+      int total = 0;
+
+      // verify length
+      if (numPiles > NUM_FINAL_PILES)
+        validLength = false;
+      
+      for (int i = 0; i < numPiles; i++)
+      {
+        // verify pilevals
+        if (this.piles[i] <= 0)
+          validPileVals = false;
+        // verify total
+        total += this.piles[i];
+        if (total > CARD_TOTAL)
+          validTotal = false;
+      }
+
+      // -------------------------- TEST ------------------------
+      if (!validLength)
+        System.out.println("ERROR: Number of Piles (" + numPiles + ") is too many. Max = 9.");
+      if (!validPileVals)
+        System.out.println("ERROR: You must have one or more cards in a pile.");
+      if (!validTotal)
+        System.out.println("ERROR: Total (" + total + ") is too long. Max = 45");
+
+      // -------------------------- TEST ------------------------
+      return validLength && validPileVals && validTotal;
    }
    
 
