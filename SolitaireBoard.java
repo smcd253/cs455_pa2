@@ -5,6 +5,7 @@
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Arrays;
 
 /*
    class SolitaireBoard
@@ -66,7 +67,8 @@ public class SolitaireBoard {
         tempMax = -4096;
       }
       assert isValidSolitaireBoard();   // sample assert statement (you will be adding more of these calls)
-   }
+      System.out.println(this.configString(true));
+    }
  
    
    /**
@@ -88,6 +90,7 @@ public class SolitaireBoard {
             break; // please don't judge, I'm only human :)
       }
       assert isValidSolitaireBoard();   // sample assert statement (you will be adding more of these calls)
+      this.piles = this.sortArray();
       System.out.println(this.configString(true));      
   }
   
@@ -101,25 +104,55 @@ public class SolitaireBoard {
   public void playRound() 
   {
     int newPile = 0;
+    int[] rmvZeros = new int[NUM_FINAL_PILES + 1];
+    Arrays.fill(rmvZeros, -1); // initialize all vals to -1 (for easy termination)
+    int rmvInd = 0;
+    int rmvZerosLen = 0;
+
+    boolean rmvFlag = false;
 
     for (int i = 0; i < this.numPiles; i++)
     {
-      if (this.piles[i] > 1)
+        if (this.piles[i] > 0)
+        {
+          this.piles[i]--;
+          newPile++;
+        } 
+        else
+        {
+          rmvZeros[rmvInd] = i;
+          rmvInd++;
+          rmvFlag = true;
+        }
+    }
+    rmvZerosLen = rmvInd + 1;
+    rmvInd = 0;
+    if (rmvFlag)
+    {
+      for (int i = 0; i < this.numPiles; i++)
       {
-        this.piles[i]--;
-        newPile++;
+        if (i == rmvZeros[rmvInd])
+        {
+          for (int j = rmvZeros[rmvInd]; j < this.numPiles; j++)
+          {
+            if (j + 1 != this.numPiles)
+            {
+              this.piles[j] = this.piles[j+1];
+            }
+          }
+          rmvInd++;
+          for (int j = rmvInd; j < rmvZerosLen; j++)
+          {
+            rmvZeros[j]--;
+          }
+        }           
       }
     }
     if (this.numPiles < NUM_FINAL_PILES)
-    {
       this.numPiles++;
-      this.piles[this.numPiles-1] += newPile;
-    }
-    else
-    {
 
-    }
-     
+    this.piles[this.numPiles-1] = newPile;
+    
     System.out.println(this.configString(false));
   }
    
@@ -210,8 +243,25 @@ public class SolitaireBoard {
   }
 
     // <add any additional private methods here>
-    private void sortArray(int[] myArr)
+    private int[] sortArray()
     {
-
+      int[] sortedPiles = new int[4096];
+      int tempMax = 0;
+      int rmvElem = 0;
+      for (int j = 0; j < this.numPiles; j++) 
+      {
+        for (int i = 0; i < this.numPiles; i++)
+        {
+            if(this.piles[i] > tempMax)
+            {
+              tempMax = this.piles[i];
+              rmvElem = i;
+            }  
+        }
+        sortedPiles[j] = tempMax;
+        this.piles[rmvElem] = 0;
+        tempMax = 0;
+      }
+      return sortedPiles;
     }
 }
