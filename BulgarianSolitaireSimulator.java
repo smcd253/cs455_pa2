@@ -34,11 +34,11 @@ public class BulgarianSolitaireSimulator {
       {
         System.out.println("You will be entering the initial configuration of the cards (i.e., how many in each pile).");
         System.out.println("Please enter a space-separated list of positive integers followed by newline:");
-        Scanner scan = new Scanner(System.in).useDelimiter("[,\\s+]");
+        Scanner scanMult = new Scanner(System.in).useDelimiter("[,\\s+]");
         
-        while (scan.hasNextInt())
+        while (scanMult.hasNextInt())
         {
-          int input = scan.nextInt();
+          int input = scanMult.nextInt();
           pilesIn.add(input);
         }
 
@@ -70,9 +70,19 @@ public class BulgarianSolitaireSimulator {
       }
       else
       {
+        SolitaireBoard myBoard = new SolitaireBoard(); // generate randome board
+
         if (singleStep)
         {
-
+          int run = 1;
+          while (run == 1) // subs with isDone()
+          {
+            Scanner scanSingle = new Scanner(System.in);
+            System.out.print("Enter 1 to continue: ");
+            run = scanSingle.nextInt();
+            myBoard.playRound();
+            System.out.println();
+          }
         }
         else
         {
@@ -82,6 +92,4 @@ public class BulgarianSolitaireSimulator {
    }
    
     // <add private static methods here>
-
-  
 }
