@@ -1,5 +1,5 @@
-Name: 
-USC NetID:
+Name: Spencer McDonough
+USC NetID: 6341617166
 CSCI 455 PA2
 Fall 2017
 
@@ -15,7 +15,7 @@ other students in the course."
 
 Initial below to "sign" the above statement:
 
-
+SHM
 ----------------------------------------------
 ACKNOWLEDGE ANY OUTSIDE SOURCES
 
@@ -31,7 +31,8 @@ i.e., the contents of the starter files for the assignment]
 ----------------------------------------------
 KNOWN BUGS or LIMITATIONS:
 
-
+1) stray 0 is left in finished array under some conditions
+- problem lies within function rmvZeros()
 
 ----------------------------------------------
 ANY OTHER NOTES FOR THE GRADER:
