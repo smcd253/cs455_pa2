@@ -42,30 +42,41 @@ public class BulgarianSolitaireSimulator {
           pilesIn.add(input);
         }
 
-        // -------------------------- TEST ------------------------
-        int listSize = pilesIn.size();
-        System.out.print("Given Piles: [");
-        for (int i = 0; i < listSize; i++)
-        {
-            if (i == listSize - 1) {
-                System.out.print(pilesIn.get(i));
-            }
-            else
-                System.out.print(pilesIn.get(i) + ", ");
-        }
-        System.out.print("]\n");
-        // -------------------------- TEST ------------------------
+        // // -------------------------- TEST ------------------------
+        // int listSize = pilesIn.size();
+        // System.out.print("Given Piles: [");
+        // for (int i = 0; i < listSize; i++)
+        // {
+        //     if (i == listSize - 1) {
+        //         System.out.print(pilesIn.get(i));
+        //     }
+        //     else
+        //         System.out.print(pilesIn.get(i) + ", ");
+        // }
+        // System.out.print("]\n");
+        // // -------------------------- TEST ------------------------
 
         // create new solitaire board
         SolitaireBoard myBoard = new SolitaireBoard(pilesIn);
         
         if (singleStep)
         {
-          
+          String dump = "";
+          while (!myBoard.isDone()) 
+          {
+            Scanner scanSingle = new Scanner(System.in);
+            System.out.print("<Type return to continue>");
+            dump = scanSingle.nextLine();
+            myBoard.playRound();
+          }
+          System.out.println("DONE");
         }
         else
         {
-
+          while(!myBoard.isDone())
+          {
+            myBoard.playRound();
+          }
         }
       }
       else
@@ -74,23 +85,22 @@ public class BulgarianSolitaireSimulator {
 
         if (singleStep)
         {
-          int run = 1;
-          while (run == 1) // subs with isDone()
+          String dump = "";
+          while (!myBoard.isDone())
           {
             Scanner scanSingle = new Scanner(System.in);
-            System.out.print("Enter 1 to continue: ");
-            run = scanSingle.nextInt();
+            System.out.print("<Type return to continue>");
+            dump = scanSingle.nextLine();
             myBoard.playRound();
-            if (myBoard.isDone())
-            {
-              System.out.println("DONE");
-              run = 0;
-            }
           }
+          System.out.println("DONE");
         }
         else
         {
-
+          while(!myBoard.isDone())
+          {
+            myBoard.playRound();
+          }
         }
       }
    }

@@ -46,7 +46,8 @@ public class SolitaireBoard {
      piles has the number of cards in the first pile, then the number of cards in the second pile, etc.
      PRE: piles contains a sequence of positive numbers that sum to SolitaireBoard.CARD_TOTAL
    */
-   public SolitaireBoard(ArrayList<Integer> piles) {
+   public SolitaireBoard(ArrayList<Integer> piles) 
+   {
       int tempMax = -4096;
       int rmvElem = 0;
       /**
@@ -64,8 +65,9 @@ public class SolitaireBoard {
         }
         this.piles[j] = tempMax;
         piles.set(rmvElem, 0);
-        tempMax = -4096;
+        tempMax = -4096;  
       }
+
       assert isValidSolitaireBoard();   // sample assert statement (you will be adding more of these calls)
       System.out.println(this.configString(true));
     }
@@ -79,7 +81,7 @@ public class SolitaireBoard {
       Random rand = new Random();
       int runningTotal = 0;
       
-      for (int i = 0; i < NUM_FINAL_PILES; i++)
+      for (int i = 0; i < CARD_TOTAL; i++) // boopidibop
       {   
           if (runningTotal < CARD_TOTAL)
           {
@@ -114,13 +116,13 @@ public class SolitaireBoard {
           newPile++;
         }    
     }
-    System.out.println("(AFTER SUBTRACTION " + this.configString(false));
+    //System.out.println("(AFTER SUBTRACTION) " + this.configString(false));
     
     rmvFlag = this.rmvZero();
 
-    if (this.numPiles < NUM_FINAL_PILES && !rmvFlag)   
+    if (this.numPiles < CARD_TOTAL && !rmvFlag)   // boopidibop
       this.numPiles++;
-      
+
     this.piles[this.numPiles-1] = newPile;
 
     System.out.println(this.configString(false));
@@ -172,14 +174,13 @@ public class SolitaireBoard {
       for (int i = 0; i < this.numPiles; i++)
       {
           if (i == this.numPiles - 1) {
-              currBoard += this.piles[i] + "\n";
+            currBoard += this.piles[i] + "\n";
           }
           else
             currBoard += this.piles[i] + " ";
       }
       return currBoard; 
   }
-   
    
    /**
       Returns true iff the solitaire board data is in a valid state
@@ -188,11 +189,11 @@ public class SolitaireBoard {
   private boolean isValidSolitaireBoard() 
   {
     // build numPiles
-    for (int i = this.piles.length-1; i >= 0; i--)
+    for (int i = this.piles.length - 1; i >= 0; i--)
     {
       if (this.piles[i] != 0)
       {
-        numPiles = i + 1;
+        this.numPiles = i + 1;
         break;
       }
     }
@@ -203,8 +204,8 @@ public class SolitaireBoard {
     int total = 0;
 
     // verify length
-    if (this.numPiles > NUM_FINAL_PILES)
-      validLength = false;
+    // if (this.numPiles > NUM_FINAL_PILES)
+    //   validLength = false;
     
     for (int i = 0; i < this.numPiles; i++)
     {
@@ -217,60 +218,96 @@ public class SolitaireBoard {
     if (total != CARD_TOTAL)
       validTotal = false;
     
-      // -------------------------- TEST ------------------------
-    if (!validLength)
-      System.out.println("ERROR: Number of Piles (" + this.numPiles + ") is too many. Max = 9.");
-    if (!validPileVals)
-      System.out.println("ERROR: You must have one or more cards in a pile.");
-    if (!validTotal)
-      System.out.println("ERROR: Total (" + total + ") is high. Max = " + CARD_TOTAL);
-    // -------------------------- TEST ------------------------
+    //   // -------------------------- TEST ------------------------
+    // if (!validLength)
+    //   System.out.println("ERROR: Number of Piles (" + this.numPiles + ") is too many. Max = 9.");
+    // if (!validPileVals)
+    //   System.out.println("ERROR: You must have one or more cards in a pile.");
+    // if (!validTotal)
+    //   System.out.println("ERROR: Total (" + total + ") is high. Max = " + CARD_TOTAL);
+    // // -------------------------- TEST ------------------------
+
+    if (!validLength || !validPileVals || !validTotal)
+      System.out.println("ERROR: Each pile must have at least one card and the total number of cards must be " + CARD_TOTAL);
     return validLength && validPileVals && validTotal;
   }
 
     // <add any additional private methods here>
-    private int[] sortArray()
+  private int[] sortArray()
+  {
+    int[] sortedPiles = new int[4096];
+    int tempMax = 0;
+    int rmvElem = 0;
+    for (int j = 0; j < this.numPiles; j++) 
     {
-      int[] sortedPiles = new int[4096];
-      int tempMax = 0;
-      int rmvElem = 0;
-      for (int j = 0; j < this.numPiles; j++) 
+      for (int i = 0; i < this.numPiles; i++)
       {
-        for (int i = 0; i < this.numPiles; i++)
-        {
-            if(this.piles[i] > tempMax)
-            {
-              tempMax = this.piles[i];
-              rmvElem = i;
-            }  
-        }
-        sortedPiles[j] = tempMax;
-        this.piles[rmvElem] = 0;
-        tempMax = 0;
+          if(this.piles[i] > tempMax)
+          {
+            tempMax = this.piles[i];
+            rmvElem = i;
+          }  
       }
-      return sortedPiles;
+      sortedPiles[j] = tempMax;
+      this.piles[rmvElem] = 0;
+      tempMax = 0;
     }
+    return sortedPiles;
+  }
 
     /**
      * removes all zeros from array after subtraction
      * current issues:
      *    doesn't remove consecutive zeros
      */
-    private boolean rmvZero()
-    {
-      boolean rmvFlag = false;
-      int[] tempArr = new int[this.numPiles];
-      Arrays.fill(tempArr,-1);
+  private boolean rmvZero()
+  {
+    boolean rmvFlag = false;
+    int[] tempArr = new int[CARD_TOTAL]; // boopidibop
 
-      for (int i = 0; i < this.numPiles; i++)
-      {
-          if (this.piles[i] == 0)
-          {            
-            System.arraycopy(this.piles, i + 1, this.piles, i, this.numPiles - (i + 1)); // add zero counter to length
-            System.out.println("(MID REMOVE) " + this.configString(false));
-            rmvFlag = true;
-          } 
-      } 
-      return rmvFlag;
-    }
+    int tempInd = 0;
+
+    for (int i = 0; i < this.numPiles; i++)
+    {
+      if (this.piles[i] != 0)
+      {            
+        tempArr[tempInd] = this.piles[i];
+        tempInd++;
+      }
+      else
+        rmvFlag = true; 
+    } 
+
+    // // ----------------------------- TEST ---------------------------   
+    // System.out.println("tempInd = " + tempInd); 
+    // System.out.print("tempArr (before cleanup) = ");
+    // for (int i = 0; i < this.numPiles; i++)
+    // {
+    //     if (i == this.numPiles - 1) {
+    //       System.out.print(tempArr[i] + "\n");
+    //     }
+    //     else
+    //       System.out.print(tempArr[i] + " ");
+    // }
+    // System.out.println();
+
+    // int[] cleanArr = new int[tempInd];
+    // System.arraycopy(tempArr, 0, cleanArr, 0, tempInd);  
+    
+    // // ----------------------------- TEST ---------------------------
+    // System.out.print("cleanArr = ");
+    // for (int i = 0; i < tempInd; i++)
+    // {
+    //     if (i == tempInd - 1) {
+    //       System.out.print(cleanArr[i] + "\n");
+    //     }
+    //     else
+    //       System.out.print(cleanArr[i] + " ");
+    // }
+    // System.out.println();
+    // // ----------------------------- TEST ---------------------------
+    
+    this.piles = tempArr.clone();
+    return rmvFlag; 
+  }
 }
