@@ -101,14 +101,9 @@ public class SolitaireBoard {
       The old piles that are left will be in the same relative order as before, 
       and the new pile will be at the end.
     */
-  public void playRound() 
+    public void playRound() 
   {
     int newPile = 0;
-    int[] rmvZeros = new int[NUM_FINAL_PILES + 1];
-    Arrays.fill(rmvZeros, -1); // initialize all vals to -1 (for easy termination)
-    int rmvInd = 0;
-    int rmvZerosLen = 0;
-
     boolean rmvFlag = false;
 
     for (int i = 0; i < this.numPiles; i++)
@@ -117,42 +112,17 @@ public class SolitaireBoard {
         {
           this.piles[i]--;
           newPile++;
-        } 
-        else
-        {
-          rmvZeros[rmvInd] = i;
-          rmvInd++;
-          rmvFlag = true;
-        }
+        }    
     }
-    rmvZerosLen = rmvInd + 1;
-    rmvInd = 0;
-    if (rmvFlag)
-    {
-      for (int i = 0; i < this.numPiles; i++)
-      {
-        if (i == rmvZeros[rmvInd])
-        {
-          for (int j = rmvZeros[rmvInd]; j < this.numPiles; j++)
-          {
-            if (j + 1 != this.numPiles)
-            {
-              this.piles[j] = this.piles[j+1];
-            }
-          }
-          rmvInd++;
-          for (int j = rmvInd; j < rmvZerosLen; j++)
-          {
-            rmvZeros[j]--;
-          }
-        }           
-      }
-    }
-    if (this.numPiles < NUM_FINAL_PILES)
-      this.numPiles++;
-
-    this.piles[this.numPiles-1] = newPile;
+    System.out.println("(AFTER SUBTRACTION " + this.configString(false));
     
+    rmvFlag = this.rmvZero();
+
+    if (this.numPiles < NUM_FINAL_PILES && !rmvFlag)   
+      this.numPiles++;
+      
+    this.piles[this.numPiles-1] = newPile;
+
     System.out.println(this.configString(false));
   }
    
@@ -163,11 +133,27 @@ public class SolitaireBoard {
    
   public boolean isDone() 
   {
-      
-     
-       return false;  // dummy code to get stub to compile
+      int[] finArr = new int[NUM_FINAL_PILES];
+      boolean allMatch = true;
+      boolean[] elemsMatch = new boolean[NUM_FINAL_PILES];
+      Arrays.fill(elemsMatch, false);
 
-      
+      for (int i = 0; i < NUM_FINAL_PILES; i++)
+      {
+        finArr[i] = NUM_FINAL_PILES - i;
+      }
+      for (int i = 0; i < NUM_FINAL_PILES; i++)
+      {
+        for (int j = 0; j < this.numPiles; j++)
+        {
+          if (this.piles[j] == finArr[i])
+          {
+            elemsMatch[i] = true;
+          }
+        }
+        allMatch &= elemsMatch[i];
+      }
+       return allMatch;  // dummy code to get stub to compile
   }
 
    
@@ -263,5 +249,28 @@ public class SolitaireBoard {
         tempMax = 0;
       }
       return sortedPiles;
+    }
+
+    /**
+     * removes all zeros from array after subtraction
+     * current issues:
+     *    doesn't remove consecutive zeros
+     */
+    private boolean rmvZero()
+    {
+      boolean rmvFlag = false;
+      int[] tempArr = new int[this.numPiles];
+      Arrays.fill(tempArr,-1);
+
+      for (int i = 0; i < this.numPiles; i++)
+      {
+          if (this.piles[i] == 0)
+          {            
+            System.arraycopy(this.piles, i + 1, this.piles, i, this.numPiles - (i + 1)); // add zero counter to length
+            System.out.println("(MID REMOVE) " + this.configString(false));
+            rmvFlag = true;
+          } 
+      } 
+      return rmvFlag;
     }
 }

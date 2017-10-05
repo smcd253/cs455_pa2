@@ -81,7 +81,11 @@ public class BulgarianSolitaireSimulator {
             System.out.print("Enter 1 to continue: ");
             run = scanSingle.nextInt();
             myBoard.playRound();
-            System.out.println();
+            if (myBoard.isDone())
+            {
+              System.out.println("DONE");
+              run = 0;
+            }
           }
         }
         else
