@@ -32,7 +32,7 @@ i.e., the contents of the starter files for the assignment]
 KNOWN BUGS or LIMITATIONS:
 
 1) stray 0 is left in finished array under some conditions
-- problem lies within function rmvZeros()
+- problem lies within function rmvZeros() (see comments in function for more details)
 
 ----------------------------------------------
 ANY OTHER NOTES FOR THE GRADER:

@@ -33,7 +33,7 @@ public class SolitaireBoard {
    /**
       Representation invariant:
 
-      <put rep. invar. comment here>
+      @param numPiles must remain greater than zero
 
     */
   
@@ -50,9 +50,9 @@ public class SolitaireBoard {
    {
       int tempMax = -4096;
       int rmvElem = 0;
-      /**
-       * find the maximum element in piles and put it into internal piles in descending order
-       */
+      
+      // find the maximum element in piles and put it into internal piles in descending order
+      
       for (int j = 0; j < piles.size(); j++) 
       {
         for (int i = 0; i < piles.size(); i++)
@@ -81,8 +81,10 @@ public class SolitaireBoard {
       Random rand = new Random();
       int runningTotal = 0;
       
-      for (int i = 0; i < CARD_TOTAL; i++) // boopidibop
+      // loops to create new piles until maximum possible limit (total number of cards)
+      for (int i = 0; i < CARD_TOTAL; i++) 
       {   
+          // final determinant is the total number of cards on board
           if (runningTotal < CARD_TOTAL)
           {
             this.piles[i] = rand.nextInt(CARD_TOTAL - runningTotal) + 1;
@@ -108,6 +110,7 @@ public class SolitaireBoard {
     int newPile = 0;
     boolean rmvFlag = false;
 
+    // subtract from all non-zero piles
     for (int i = 0; i < this.numPiles; i++)
     {
         if (this.piles[i] > 0)
@@ -116,13 +119,16 @@ public class SolitaireBoard {
           newPile++;
         }    
     }
-    //System.out.println("(AFTER SUBTRACTION) " + this.configString(false));
     
+    // remove non-zero piles
     rmvFlag = this.rmvZero();
 
-    if (this.numPiles < CARD_TOTAL && !rmvFlag)   // boopidibop
+    // make room for new pile to end ONLY if we have less piles than cards AND
+    // if there has NOT been a zero removed
+    if (this.numPiles < CARD_TOTAL && !rmvFlag)  
       this.numPiles++;
 
+    // insert new pile
     this.piles[this.numPiles-1] = newPile;
 
     System.out.println(this.configString(false));
@@ -131,6 +137,9 @@ public class SolitaireBoard {
    /**
       Returns true iff the current board is at the end of the game.  That is, there are NUM_FINAL_PILES
       piles that are of sizes 1, 2, 3, . . . , NUM_FINAL_PILES, in any order.
+
+      NOTE: known bug: cannot verify NUM_FINAL_PILES b/c there is an unexplained stray 0 in some final results
+            please let me know how I can fix this, as I am stuck
     */
    
   public boolean isDone() 
@@ -140,6 +149,7 @@ public class SolitaireBoard {
       boolean[] elemsMatch = new boolean[NUM_FINAL_PILES];
       Arrays.fill(elemsMatch, false);
 
+      // build ideal array (1-9) to be compared to
       for (int i = 0; i < NUM_FINAL_PILES; i++)
       {
         finArr[i] = NUM_FINAL_PILES - i;
@@ -153,9 +163,11 @@ public class SolitaireBoard {
             elemsMatch[i] = true;
           }
         }
+        // and array of booleans together
         allMatch &= elemsMatch[i];
       }
-       return allMatch;  // dummy code to get stub to compile
+      // returns true if all elements match the ideal array (1-9)
+      return allMatch;  
   }
 
    
@@ -203,6 +215,7 @@ public class SolitaireBoard {
     boolean validTotal = true;
     int total = 0;
 
+    // NOTE: cannot do this due to limitation in rmvZeros
     // verify length
     // if (this.numPiles > NUM_FINAL_PILES)
     //   validLength = false;
@@ -233,6 +246,7 @@ public class SolitaireBoard {
   }
 
     // <add any additional private methods here>
+  // sorts random array into descending order
   private int[] sortArray()
   {
     int[] sortedPiles = new int[4096];
@@ -263,10 +277,12 @@ public class SolitaireBoard {
   private boolean rmvZero()
   {
     boolean rmvFlag = false;
-    int[] tempArr = new int[CARD_TOTAL]; // boopidibop
+    int[] tempArr = new int[CARD_TOTAL]; 
 
     int tempInd = 0;
 
+    // loop through this.piles and only deposit non-zero values into tempArr
+    // may be where bug is?
     for (int i = 0; i < this.numPiles; i++)
     {
       if (this.piles[i] != 0)
@@ -307,7 +323,10 @@ public class SolitaireBoard {
     // System.out.println();
     // // ----------------------------- TEST ---------------------------
     
-    this.piles = tempArr.clone();
+    // this is where the issue propagates back to the main piles array
+    // there are stray zeros hanging onto end of tempArr
+    // primitive member function clone() may be part of the issue
+    this.piles = tempArr.clone(); 
     return rmvFlag; 
   }
 }
